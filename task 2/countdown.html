@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown to Event</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #countdown, #updatedCountdown {
+            font-size: 2em;
+            color: #d9534f;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, button {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Countdown to <span id="eventName">[Your Event Name]</span></h1>
+    
+    <!-- Event name as a placeholder -->
+    <label for="eventNameInput">Event Name:</label>
+    <input type="text" id="eventNameInput" placeholder="Enter your event name">
+
+    <!-- Labels and input fields for date and time input -->
+    <label for="eventDate">Set Date:</label>
+    <input type="date" id="eventDate">
+
+    <label for="eventTime">Set Time:</label>
+    <input type="time" id="eventTime">
+
+    <button onclick="setCountdown()">Set Countdown</button>
+    
+    <div id="countdown"></div>
+    <div id="updatedCountdown"></div>
+</div>
+
+<script>
+    var originalCountDownDate = new Date("Dec 31, 2023 23:59:59").getTime();
+    var originalCountdownVisible = true;
+    var eventDate, eventTime, eventName; // Declare eventDate, eventTime, and eventName variables globally
+    
+    function setCountdown() {
+        // Get the event details from the input field
+        eventName = document.getElementById("eventNameInput").value;
+
+        // Set eventDate and eventTime
+        eventDate = document.getElementById("eventDate").value;
+        eventTime = document.getElementById("eventTime").value;
+
+        // If the user sets a new date and time, show the updated countdown
+        if (eventDate && eventTime) {
+            var updatedCountDownDate = new Date(eventDate + " " + eventTime).getTime();
+
+            // Hide the original countdown
+            if (originalCountdownVisible) {
+                document.getElementById("countdown").style.display = "none";
+                originalCountdownVisible = false;
+            }
+
+            // Update the updated countdown every 1 second
+            var x = setInterval(function () {
+                // Get the current date and time
+                var now = new Date().getTime();
+
+                // Calculate the remaining time
+                var distance = updatedCountDownDate - now;
+
+                // Calculate days, hours, minutes, and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the updated countdown
+                document.getElementById("updatedCountdown").innerHTML = (distance >= 0)
+                    ? days + "d " + hours + "h " + minutes + "m " + seconds + "s "
+                    : "EXPIRED";
+
+                // If the countdown is over, display a message
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("updatedCountdown").innerHTML = "EXPIRED";
+                }
+            }, 1000);
+
+            // Set the event name
+            document.getElementById("eventName").innerHTML = eventName;
+        } else {
+            // If no new date and time are set, show the original countdown
+            displayCountdown("countdown", originalCountDownDate);
+        }
+    }
+
+    function displayCountdown(elementId, date, days = 0, hours = 0, minutes = 0, seconds = 0) {
+        var countdownElement = document.getElementById(elementId);
+        var distance = date - new Date().getTime();
+        var countdownText = (distance >= 0)
+            ? days + "d " + hours + "h " + minutes + "m " + seconds + "s "
+            : "EXPIRED";
+
+        countdownElement.innerHTML = countdownText;
+    }
+</script>
+
+</body>
+</html>
